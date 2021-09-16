@@ -27,3 +27,29 @@ if event.pressed and is_selecting():
     if gsr and gsr.state != gsr.GSRState.NONE:
         return
 ```
+
+### Emitting and Consuming Work State
+
+Plugins can tell every other plugin that they started a workload, so other plugins can make decisions about what to do:
+```
+func start()
+	interop.start_work("plugin_work")
+    ...
+
+func commit()
+    interop.end_work("plugin_work")
+    ...
+```
+
+Plugins can consume this via the optional `_interop_notification(what, args)` function:
+```
+    match what:
+        interop.NOTIFY_CODE_WORK_STARTED:
+            match args:
+                "plugin_transform":
+                    toolbar.toggle_plugin_buttons(false)
+        interop.NOTIFY_CODE_WORK_ENDED:
+            match args:
+                "plugin_transform":
+                    toolbar.toggle_plugin_buttons(true)
+```
