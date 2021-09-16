@@ -53,3 +53,9 @@ Plugins can consume this via the optional `_interop_notification(what, args)` fu
                 "plugin_transform":
                     toolbar.toggle_plugin_buttons(true)
 ```
+
+Builtin Notification Codes:
+```
+NOTIFY_CODE_WORK_STARTED = 1 -> string
+NOTIFY_CODE_WORK_ENDED = 2 -> string
+```
