@@ -33,7 +33,7 @@ if event.pressed and is_selecting():
 Plugins can tell every other plugin that they started a workload, so other plugins can make decisions about what to do:
 ```
 func start()
-	interop.start_work("plugin_work")
+    interop.start_work("plugin_work")
     ...
 
 func commit()
