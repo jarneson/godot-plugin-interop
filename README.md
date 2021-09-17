@@ -3,7 +3,6 @@ A snippet of code for enabling interoperability between plugins.
 
 ## Installation
 - Copy these files into your plugin (wherever you like)
-- Update the `<PLUGIN_NAME>` placeholder in interop.gd
 
 ## Usage
 In your plugin, register and deregister your plugin:
@@ -11,7 +10,7 @@ In your plugin, register and deregister your plugin:
 ```
 var interop = null
 func _enter_tree() -> void:
-    interop = Interop.get_instance(self)
+    interop = Interop.get_instance(self, "res://addons/plugin/interop_node.gd")
     interop.register("ply", self)
     ...
 
