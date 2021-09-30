@@ -77,7 +77,7 @@ static func _notify_plugins(plugin: EditorPlugin, code: int, args):
 	for name in plugins:
 		var p = plugins[name]
 		if p.has_method("_interop_notification"):
-			p._interop_notification(code, args)
+			p._interop_notification(plugin, code, args)
 
 static func start_work(plugin: EditorPlugin, what):
 	_notify_plugins(plugin, NOTIFY_CODE_WORK_STARTED, what)
