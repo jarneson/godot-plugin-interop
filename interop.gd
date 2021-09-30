@@ -60,7 +60,6 @@ static func deregister(plugin: EditorPlugin, plugin_name: String):
 		n.queue_free()
 	else:
 		n.set_meta(_PLUGIN_DICTIONARY, plugins)
-	
 
 static func get_plugin_or_null(plugin: EditorPlugin, name_to_find: String):
 	var n: Node = ___get_interop_node(plugin)
@@ -76,7 +75,7 @@ static func _notify_plugins(plugin: EditorPlugin, code: int, args):
 		return null
 	for name in plugins:
 		var p = plugins[name]
-		if p.has_method("_interop_notification"):
+		if p != plugin && p.has_method("_interop_notification"):
 			p._interop_notification(plugin, code, args)
 
 static func start_work(plugin: EditorPlugin, what):
