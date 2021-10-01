@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 Jeffrey Arneson
+Copyright (c) 2021 Jeffrey Arneson, Sólyom Zoltán
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,16 @@ SOFTWARE.
 tool
 extends Node
 
+# Notification when a plugin starts doing something which will be in progress
+# until NOTIFY_CODE_WORK_ENDED notification is received.
 const NOTIFY_CODE_WORK_STARTED = 1
+# Notification when a plugin finished something that was in progress
+# since NOTIFY_CODE_WORK_STARTED.
 const NOTIFY_CODE_WORK_ENDED = 2
+# Notification when a plugin request every other plugin to not react to input.
+const NOTIFY_REQUEST_IGNORE_INPUT = 3
+# Notification when a plugin stops requesting every other plugin to not react to input.
+const NOTIFY_ALLOW_INPUT = 4
 
 const _PLUGIN_NODE_NAME = "plugin_interop"
 const _PLUGIN_DICTIONARY = "PluginDictionary"
@@ -50,6 +58,11 @@ static func ___get_interop_node(plugin: EditorPlugin):
 	assert(n != null, "Interop node does not exist. Make sure to register your plugin first.")
 	return n
 
+static func ___get_interop_plugins(plugin: EditorPlugin):
+	var n: Node = ___get_interop_node(plugin)
+	var plugins = n.get_meta(_PLUGIN_DICTIONARY) if n.has_meta(_PLUGIN_DICTIONARY) else null
+	return plugins
+
 static func deregister(plugin: EditorPlugin, plugin_name: String):
 	var n: Node = ___get_interop_node(plugin)
 	var plugins = n.get_meta(_PLUGIN_DICTIONARY) if n.has_meta(_PLUGIN_DICTIONARY) else null
@@ -60,17 +73,16 @@ static func deregister(plugin: EditorPlugin, plugin_name: String):
 		n.queue_free()
 	else:
 		n.set_meta(_PLUGIN_DICTIONARY, plugins)
+	
 
 static func get_plugin_or_null(plugin: EditorPlugin, name_to_find: String):
-	var n: Node = ___get_interop_node(plugin)
-	var plugins = n.get_meta(_PLUGIN_DICTIONARY) if n.has_meta(_PLUGIN_DICTIONARY) else null
+	var plugins = ___get_interop_plugins(plugin)
 	if plugins == null:
 		return null
 	return plugins.get(name_to_find)
 
-static func _notify_plugins(plugin: EditorPlugin, code: int, args):
-	var n: Node = ___get_interop_node(plugin)
-	var plugins = n.get_meta(_PLUGIN_DICTIONARY) if n.has_meta(_PLUGIN_DICTIONARY) else null
+static func _notify_plugins(plugin: EditorPlugin, code: int, args = null):
+	var plugins = ___get_interop_plugins(plugin)
 	if plugins == null:
 		return null
 	for name in plugins:
@@ -83,3 +95,10 @@ static func start_work(plugin: EditorPlugin, what):
 
 static func end_work(plugin: EditorPlugin, what):
 	_notify_plugins(plugin, NOTIFY_CODE_WORK_ENDED, what)
+
+static func grab_full_input(plugin: EditorPlugin):
+	_notify_plugins(plugin, NOTIFY_REQUEST_IGNORE_INPUT)
+	
+static func release_full_input(plugin: EditorPlugin):
+	_notify_plugins(plugin, NOTIFY_ALLOW_INPUT)
+	
