@@ -107,14 +107,15 @@ Notification when a plugin stops requesting every other plugin to not react to i
 ### Custom plugin notifications:
 You can define any value as notification code in your plugin. To be tidy and not clash with the notification codes of the
 interop script, define your codes as a combination of NOTIFY_CODE_USER and a value like this:
-```
+```swift
 const MY_NOTIFY_CODE = Interop.NOTIFY_CODE_USER + 0
 const MY_SECOND_NOTIFY_CODE = Interop.NOTIFY_CODE_USER + 1
 ```
 
 To broadcast a notification, write:
-```
-    # This is just an example. Use your codes, id strings, and arguments. Both the id and arguments are optional.
+```swift
+    # This is just an example. Use your codes, id strings, and arguments.
+    # Both the id and arguments are optional.
     Interop.notify_plugins(self, MY_NOTIFY_CODE, "my_custom_id_string", [1, 2, some_value])
 ```
 
